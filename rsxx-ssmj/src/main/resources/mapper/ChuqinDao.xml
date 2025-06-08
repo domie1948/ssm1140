@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ChuqinDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yonghu_id as yonghuId
+        ,a.today as today
+        ,a.on_time as onTime
+        ,a.down_time as downTime
+        ,a.chuqin_types as chuqinTypes
+        ,a.overtimeNumber as overtimeNumber
+        ,a.create_time as createTime
+    </sql>
+
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ChuqinView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,yonghu.username as username
+        ,yonghu.password as password
+        ,yonghu.name as name
+        ,yonghu.phone as phone
+        ,yonghu.zhiwu_types as zhiwuTypes
+        ,yonghu.zhicheng_types as zhichengTypes
+        ,yonghu.id_number as idNumber
+        ,yonghu.sex_types as sexTypes
+        ,yonghu.my_photo as myPhoto
+        ,yonghu.nation as nation
+        ,yonghu.politics_types as politicsTypes
+        ,yonghu.residence as residence
+        ,yonghu.birthplace as birthplace
+        ,yonghu.marriage_types as marriageTypes
+        ,yonghu.education_types as educationTypes
+        ,yonghu.school as school
+
+        FROM chuqin  a
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.yonghuId != null">
+                and a.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test=" params.today != '' and params.today != null and params.today != 'null' ">
+                and a.today like CONCAT('%',#{params.today},'%')
+            </if>
+            <if test=" params.onTimeStart != '' and params.onTimeStart != null ">
+                <![CDATA[ and DATE_FORMAT(a.on_time, '%H:%i') >= #{params.onTimeStart}   ]]>
+            </if>
+            <if test=" params.onTimeEnd != '' and params.onTimeEnd != null">
+                <![CDATA[ and DATE_FORMAT(a.on_time, '%H:%i') <= #{params.onTimeEnd}   ]]>
+            </if>
+            <if test=" params.downTimeStart != '' and params.downTimeStart != null">
+                <![CDATA[  and DATE_FORMAT(a.down_time, '%H:%i') >= DATE_FORMAT(#{params.downTimeStart}, '%H:%T')  ]]>
+            </if>
+            <if test=" params.downTimeEnd != '' and params.downTimeEnd != null">
+               <![CDATA[   and DATE_FORMAT(a.down_time, '%H:%i') <=  DATE_FORMAT(#{params.downTimeEnd}, '%H:%T')  ]]>
+            </if>
+            <if test=" params.chuqinTypes != '' and params.chuqinTypes != null">
+                and a.chuqin_types = #{params.chuqinTypes}
+            </if>
+            <if test=" params.overtimeNumber != '' and params.overtimeNumber != null and params.overtimeNumber != 'null' ">
+                and a.overtimeNumber = #{params.overtimeNumber}
+            </if>
+
+            <if test=" params.username != '' and params.username != null and params.username != 'null' ">
+                and yonghu.username like CONCAT('%',#{params.username},'%')
+            </if>
+            <if test=" params.password != '' and params.password != null and params.password != 'null' ">
+                and yonghu.password like CONCAT('%',#{params.password},'%')
+            </if>
+            <if test=" params.name != '' and params.name != null and params.name != 'null' ">
+                and yonghu.name like CONCAT('%',#{params.name},'%')
+            </if>
+            <if test=" params.phone != '' and params.phone != null and params.phone != 'null' ">
+                and yonghu.phone like CONCAT('%',#{params.phone},'%')
+            </if>
+            <if test=" params.zhiwuTypes != '' and params.zhiwuTypes != null and params.zhiwuTypes != 'null' ">
+                and yonghu.zhiwu_types = #{params.zhiwuTypes}
+            </if>
+            <if test=" params.zhichengTypes != '' and params.zhichengTypes != null and params.zhichengTypes != 'null' ">
+                and yonghu.zhicheng_types = #{params.zhichengTypes}
+            </if>
+            <if test=" params.idNumber != '' and params.idNumber != null and params.idNumber != 'null' ">
+                and yonghu.id_number like CONCAT('%',#{params.idNumber},'%')
+            </if>
+            <if test=" params.sexTypes != '' and params.sexTypes != null and params.sexTypes != 'null' ">
+                and yonghu.sex_types = #{params.sexTypes}
+            </if>
+            <if test=" params.nation != '' and params.nation != null and params.nation != 'null' ">
+                and yonghu.nation like CONCAT('%',#{params.nation},'%')
+            </if>
+            <if test=" params.politicsTypes != '' and params.politicsTypes != null and params.politicsTypes != 'null' ">
+                and yonghu.politics_types = #{params.politicsTypes}
+            </if>
+            <if test=" params.residence != '' and params.residence != null and params.residence != 'null' ">
+                and yonghu.residence like CONCAT('%',#{params.residence},'%')
+            </if>
+            <if test=" params.birthplace != '' and params.birthplace != null and params.birthplace != 'null' ">
+                and yonghu.birthplace like CONCAT('%',#{params.birthplace},'%')
+            </if>
+            <if test=" params.marriageTypes != '' and params.marriageTypes != null and params.marriageTypes != 'null' ">
+                and yonghu.marriage_types = #{params.marriageTypes}
+            </if>
+            <if test=" params.educationTypes != '' and params.educationTypes != null and params.educationTypes != 'null' ">
+                and yonghu.education_types = #{params.educationTypes}
+            </if>
+            <if test=" params.school != '' and params.school != null and params.school != 'null' ">
+                and yonghu.school like CONCAT('%',#{params.school},'%')
+            </if>
+        </where>
+        order by a.id desc
+    </select>
+
+</mapper>
